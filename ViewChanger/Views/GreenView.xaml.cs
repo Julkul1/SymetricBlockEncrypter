@@ -16,11 +16,11 @@ using System.Windows.Shapes;
 namespace SymetricBlockEncrypter.Views
 {
     /// <summary>
-    /// Interaction logic for OrangeView.xaml
+    /// Interaction logic for GreenView.xaml
     /// </summary>
-    public partial class OrangeView : UserControl
+    public partial class GreenView : UserControl
     {
-        public OrangeView()
+        public GreenView()
         {
             InitializeComponent();
         }

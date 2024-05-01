@@ -33,24 +33,19 @@ namespace SymetricBlockEncrypter
             this.Width = 1210;
             this.Height = 830;
             this.ResizeMode = ResizeMode.CanResize;
-            OrangeNavbarButton.Visibility = Visibility.Visible;
+            GreenNavbarButton.Visibility = Visibility.Visible;
             VisualiseNavbarButton.Visibility = Visibility.Collapsed;
             DataContext = new VisualizeViewModel();
         }
 
-        private void BlueView_Clicked(object sender, RoutedEventArgs e)
-        {
-            DataContext = new BlueViewModel();
-        }
-
-        private void OrangeView_Clicked(object sender, RoutedEventArgs e)
+        private void GreenView_Clicked(object sender, RoutedEventArgs e)
         {
             this.Width = 315;
             this.Height = 260;
             this.ResizeMode = ResizeMode.NoResize;
-            OrangeNavbarButton.Visibility = Visibility.Collapsed;
+            GreenNavbarButton.Visibility = Visibility.Collapsed;
             VisualiseNavbarButton.Visibility = Visibility.Visible;
-            DataContext = new OrangeViewModel();
+            DataContext = new GreenViewModel();
         }
     }
 }
