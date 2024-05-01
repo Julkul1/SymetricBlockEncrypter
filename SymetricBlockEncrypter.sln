@@ -1,0 +1,25 @@
+
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.2.32526.322
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SymetricBlockEncrypter", "ViewChanger\SymetricBlockEncrypter.csproj", "{DB56425B-09EB-4CA2-AC4F-F1B48AFC9AE2}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{DB56425B-09EB-4CA2-AC4F-F1B48AFC9AE2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DB56425B-09EB-4CA2-AC4F-F1B48AFC9AE2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DB56425B-09EB-4CA2-AC4F-F1B48AFC9AE2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DB56425B-09EB-4CA2-AC4F-F1B48AFC9AE2}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {6CC116C7-5D4A-4A7B-9B18-77053AD3AA4F}
+	EndGlobalSection
+EndGlobal
