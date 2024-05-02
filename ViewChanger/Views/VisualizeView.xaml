@@ -93,7 +93,7 @@
                 <Label Content="Mode:" Margin="10,25,0,0" Height="16" Padding="0,0,0,0"/>
                 <ComboBox Height="20" Margin="45,25,0,0" Width="50" SelectedIndex="0" 
                               ItemsSource="{Binding EncryptionTypes}"   
-                              SelectedItem="{Binding SelectedDecryptionType}" />
+                              SelectedItem="{Binding SelectedEncryptionType}" />
                 <Polygon Points="{StaticResource ArrowPoints}" Fill="Black" Margin="10,50,0,0">
                     <Polygon.RenderTransform>
                         <ScaleTransform ScaleX="0.8" ScaleY="1"/>
@@ -115,11 +115,11 @@
             <Label Content="Vector IV: " Margin="5,10,0,0" FontSize="15"/>
             <Label Content="Original: " Height="20" Margin="15,40,0,0" Padding="0"/>
             <Border BorderBrush="DarkGray" BorderThickness="2" Background="LightGray" Margin="70,40,0,0">
-                <Label Content="{Binding InitVectorOriginalValue}" Width="200" Height="16" Padding="0"/>
+                <TextBox Text="{Binding InitVectorOriginalValue}" Width="250" Height="16" Padding="0" Background="LightGray" IsReadOnly="True"/>
             </Border>
             <Label Content="Modified: " Height="20" Margin="15,72,0,0" Padding="0"/>
             <Border BorderBrush="DarkGray" BorderThickness="2" Margin="70,70,0,0">
-                <TextBox Width="200" Height="20" TextWrapping="Wrap" Text="{Binding InitVectorModifiedValue, UpdateSourceTrigger=PropertyChanged}" />
+                <TextBox Width="250" Height="20" TextWrapping="Wrap" Text="{Binding InitVectorModifiedValue, UpdateSourceTrigger=PropertyChanged}"/>
             </Border>
         </Canvas>
 

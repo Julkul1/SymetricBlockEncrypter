@@ -1,5 +1,6 @@
 ﻿using Microsoft.Win32;
 using SymetricBlockEncrypter.Commands;
+using SymetricBlockEncrypter.Models;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -17,14 +18,14 @@ namespace SymetricBlockEncrypter.ViewModels
             // Paths of default images to show
             string rootFolder = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\..\..";
 
-            this._fileName = "Obama.jpg";
-            this._filePath = rootFolder + @"\Assets\Images\Obama.jpg";
+            this._fileName = "Select a file";
+            this._filePath = string.Empty;
 
 
-            // Set up Commands for Image Download and Upload buttons
-            this.SelectFileCommand = new RelayCommand(SelectImage);
-            this.EncryptFileCommand = new RelayCommand(() => SaveImage("Encrypt"));
-            this.DecryptFileCommand = new RelayCommand(() => SaveImage("Decrypt"));
+            // Set up Commands for file Download and Upload buttons
+            this.SelectFileCommand = new RelayCommand(SelectFile);
+            this.EncryptFileCommand = new RelayCommand(() => SaveFile("Encrypt"));
+            this.DecryptFileCommand = new RelayCommand(() => SaveFile("Decrypt"));
 
             // Set up drop down menu to choose encryption modes from
             this._encryptionTypes = new ObservableCollection<string>()
@@ -33,6 +34,29 @@ namespace SymetricBlockEncrypter.ViewModels
             };
             this._selectedEncryptionType = this._encryptionTypes[0];
 
+            // Initialize AES
+            this.aesEncryptor = new AESEncryption();
+            this.IV = "";
+
+            IV += "10101100";
+            IV += "11111110";
+            IV += "10111110";
+            IV += "10000100";
+            IV += "10111101";
+            IV += "00101100";
+            IV += "10101110";
+            IV += "00101110";
+            IV += "10101101";
+            IV += "00101100";
+            IV += "10101110";
+            IV += "00101111";
+            IV += "10111100";
+            IV += "10101110";
+            IV += "11111100";
+
+            aesEncryptor.SetInitializationVector(IV);
+            aesEncryptor.SetEncryptionBlockMode(_encryptionTypes[0]);
+            aesEncryptor.SetAESKey("HELLO WORLD");
         }
 
         #endregion
@@ -40,13 +64,17 @@ namespace SymetricBlockEncrypter.ViewModels
 
         #region Members
 
-        // File name member
+        // File name members
         private string _fileName;
         private string _filePath;
 
         // Drop down menu members
         private ObservableCollection<string> _encryptionTypes;
         private string _selectedEncryptionType;
+
+        // Encrpytion members
+        AESEncryption aesEncryptor;
+        string IV;
 
         #endregion
 
@@ -85,7 +113,7 @@ namespace SymetricBlockEncrypter.ViewModels
                 if (value != this._selectedEncryptionType)
                 {
                     this._selectedEncryptionType = value;
-                    // TODO call function
+                    aesEncryptor.SetEncryptionBlockMode(value);
                 }
             }
         }
@@ -113,11 +141,10 @@ namespace SymetricBlockEncrypter.ViewModels
             }
         }
 
-        private void SelectImage()
+        private void SelectFile()
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
-            // Accept only .png .jpg .bmp file types
-            openFileDialog.Filter = "Image Files (*.png;*.jpg;*.bmp)|*.png;*.jpg;*.bmp|All Files (*.*)|*.*";
+            openFileDialog.Filter = "All Files (*.*)|*.*";
             openFileDialog.FilterIndex = 1;
             openFileDialog.Multiselect = false;
 
@@ -125,11 +152,17 @@ namespace SymetricBlockEncrypter.ViewModels
             {
                 this.FileName = openFileDialog.SafeFileName;
                 this._filePath = openFileDialog.FileName;
+                aesEncryptor.SetInputFilePath(this._filePath);
             }
         }
 
-        private void SaveImage(string saveType)
+        private void SaveFile(string saveType)
         {
+            if (this._filePath.Equals(string.Empty))
+            { 
+                return;
+            }
+
             SaveFileDialog saveFileDialog = new SaveFileDialog();
             saveFileDialog.Filter = "All Files (*.*)|*.*"; // Filter to show all file types
             saveFileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments); // Set initial directory
@@ -143,13 +176,17 @@ namespace SymetricBlockEncrypter.ViewModels
             string filePath = saveFileDialog.FileName;
             // Now you can use filePath to save your downloaded file
 
-            if (saveType == "Encrypted")
+            if (saveType == "Encrypt")
             {
-                // TODO: Implement file encryption
+                aesEncryptor.SetOutputFilePath(filePath);
+                aesEncryptor.Encrypt();
+                aesEncryptor.SaveFile();
             }
-            else if (saveType == "Decrypted")
+            else if (saveType == "Decrypt")
             {
-                // TODO: Implement file encryption
+                aesEncryptor.SetOutputFilePath(filePath);
+                aesEncryptor.Decrypt();
+                aesEncryptor.SaveFile();
             }
         }
 
