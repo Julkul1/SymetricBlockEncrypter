@@ -12,11 +12,8 @@
         <DataTemplate x:Name="visualizeViewTemplate" DataType="{x:Type viewmodels:VisualizeViewModel}">
             <views:VisualizeView DataContext="{Binding}"/>
         </DataTemplate>
-        <DataTemplate x:Name="blueViewTemplate" DataType="{x:Type viewmodels:BlueViewModel}">
-            <views:BlueView DataContext="{Binding}"/>
-        </DataTemplate>
-        <DataTemplate x:Name="orangeViewTemplate" DataType="{x:Type viewmodels:OrangeViewModel}">
-            <views:OrangeView DataContext="{Binding}"/>
+        <DataTemplate x:Name="greenViewTemplate" DataType="{x:Type viewmodels:GreenViewModel}">
+            <views:GreenView DataContext="{Binding}"/>
         </DataTemplate>
     </Window.Resources>
     <Grid>
@@ -31,8 +28,7 @@
         <DockPanel Background="Gray" Grid.Row="0" Grid.Column="0">
             <StackPanel Orientation="Horizontal">
                 <Button Name="VisualiseNavbarButton" Content="Visualize View" Width="100" Click="Visualize_Clicked"/>
-                <Button Name="BlueNavbarButton" Visibility="Collapsed" Content="Blue View" Width="80" Click="BlueView_Clicked"/>
-                <Button Name="OrangeNavbarButton" Content="Orange View" Width="80" Click="OrangeView_Clicked" />
+                <Button Name="GreenNavbarButton" Content="Green View" Width="80" Click="GreenView_Clicked" />
             </StackPanel>
         </DockPanel>
 

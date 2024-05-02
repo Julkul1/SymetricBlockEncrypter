@@ -1,22 +1,18 @@
 ﻿using Microsoft.Win32;
+using SymetricBlockEncrypter.Commands;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
-using SymetricBlockEncrypter.Commands;
 
 namespace SymetricBlockEncrypter.ViewModels
 {
-    public class OrangeViewModel : INotifyPropertyChanged
+    public class GreenViewModel : INotifyPropertyChanged
     {
         #region Consturctors
-        public OrangeViewModel()
+        public GreenViewModel()
         {
             // Paths of default images to show
             string rootFolder = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\..\..";
@@ -63,7 +59,7 @@ namespace SymetricBlockEncrypter.ViewModels
             set
             {
                 if (value != this._fileName)
-                { 
+                {
                     this._fileName = value;
                     RaisePropertyChanged("FileName");
                 }
