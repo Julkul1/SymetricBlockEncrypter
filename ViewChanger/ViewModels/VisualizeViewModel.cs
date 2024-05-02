@@ -302,6 +302,11 @@ namespace SymetricBlockEncrypter.ViewModels
 
         private void DecryptImage()
         {
+            if (_encryptedImage == null)
+            {
+                return;
+            }
+            
             // Fix for image not refreshing due to the same path name
             // Each time we switch between 2 files if saving in the same encryption mode
             BitmapImage image = _decryptedImage as BitmapImage;
