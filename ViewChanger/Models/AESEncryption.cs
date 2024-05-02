@@ -32,7 +32,7 @@ namespace SymetricBlockEncrypter.Models
 
         //constants
         private const double BITS_IN_A_BYTE = 8.0;
-        private const int PNG_HEADER_SIZE = 16;
+        private const int PNG_HEADER_SIZE = 64;
 
         //fields
         private byte[]? inputFileBinary;
@@ -90,12 +90,15 @@ namespace SymetricBlockEncrypter.Models
             {
                 case "ECB":
                     AES.Mode = CipherMode.ECB;
+                    isCounterModeActive = false;
                     break;
                 case "CBC":
                     AES.Mode = CipherMode.CBC;
+                    isCounterModeActive = false;
                     break;
                 case "CFB":
                     AES.Mode = CipherMode.CFB;
+                    isCounterModeActive = false;
                     break;
                 case "CTR":
                     isCounterModeActive = true;
@@ -160,10 +163,10 @@ namespace SymetricBlockEncrypter.Models
         //will be good for a "save output" button handler
         public void SaveFile()
         {
-            using var writer = new BinaryWriter(File.OpenWrite(outputFilePath)); ;
-            writer.Write(outputFileBinary);
-
-
+            using (var writer = new BinaryWriter(File.OpenWrite(outputFilePath)))
+            {
+                writer.Write(outputFileBinary);
+            }
         }
 
         private void WriteHeader(MemoryStream inputFileStream, MemoryStream outputFileStream)
@@ -176,7 +179,11 @@ namespace SymetricBlockEncrypter.Models
             outputFileStream.Write(header, 0, header.Length);
         }
 
-
+        //copy given file to a new path
+        public void CopyFile(string source, string dest)
+        {
+            File.Copy(source, dest);
+        }
 
         //encrypts the file using any mode except of CTR
         private void GenericNonCTREncrypt()
@@ -343,6 +350,27 @@ namespace SymetricBlockEncrypter.Models
             return true;
         }
 
+        //convert binary string to hex string and opposite
+        public string InitVectorConverter(string initVector, bool bitToHex)
+        {
+            string result = "";
 
+            if (bitToHex)
+            {
+                for (int i = 0; i < initVector.Length; i += 4)
+                {
+                    result += Convert.ToInt32(initVector.Substring(i, 4), 2).ToString("X");
+                }
+            }
+            else
+            {
+                foreach (char c in initVector)
+                {
+                    result += Convert.ToString(Convert.ToInt32(c.ToString(), 16), 2).PadLeft(4, '0');
+                }
+            }
+
+            return result;
+        }
     }
 }
