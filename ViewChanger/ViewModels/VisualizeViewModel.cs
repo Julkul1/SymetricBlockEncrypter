@@ -27,9 +27,9 @@ namespace SymetricBlockEncrypter.ViewModels
             ClearTmpFiles();
 
             // Paths of default images to show
-            this.rootFolder = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\..\..\..";
+            this._rootFolder = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\..\..\..";
 
-            this._originalImage = rootFolder + @"\Assets\Images\Obama.bmp";
+            this._originalImage = _rootFolder + @"\Assets\Images\Obama.bmp";
             this._originalImageSafeName = "Obama.bmp";
             this._encryptedImage = null;
             this._decryptedImage = null;
@@ -51,32 +51,32 @@ namespace SymetricBlockEncrypter.ViewModels
             this.DecryptImageCommand = new RelayCommand(DecryptImage);
 
             // Initialize AES
-            this.aesEncryptor = new AESEncryption();
-            this.IV = "";
+            this._aesEncryptor = new AESEncryption();
+            this._vectorIV = "";
 
-            IV += "10101100";
-            IV += "11111110";
-            IV += "10111110";
-            IV += "10000100";
-            IV += "10111101";
-            IV += "00101100";
-            IV += "10101110";
-            IV += "00101110";
-            IV += "10101101";
-            IV += "00101100";
-            IV += "10101110";
-            IV += "00101111";
-            IV += "10111100";
-            IV += "10101110";
-            IV += "11111100";
+            _vectorIV += "10101100";
+            _vectorIV += "11111110";
+            _vectorIV += "10111110";
+            _vectorIV += "10000100";
+            _vectorIV += "10111101";
+            _vectorIV += "00101100";
+            _vectorIV += "10101110";
+            _vectorIV += "00101110";
+            _vectorIV += "10101101";
+            _vectorIV += "00101100";
+            _vectorIV += "10101110";
+            _vectorIV += "00101111";
+            _vectorIV += "10111100";
+            _vectorIV += "10101110";
+            _vectorIV += "11111100";
 
-            aesEncryptor.SetInitializationVector(IV);
-            aesEncryptor.SetEncryptionBlockMode(_encryptionTypes[0]);
-            aesEncryptor.SetAESKey("HELLO WORLD");
+            _aesEncryptor.SetInitializationVector(_vectorIV);
+            _aesEncryptor.SetEncryptionBlockMode(_encryptionTypes[0]);
+            _aesEncryptor.SetAESKey("HELLO WORLD");
 
             // Set up init vector members
-            this._initVectorOriginalValue = aesEncryptor.InitVectorConverter(IV, true);
-            this._initVectorModifiedValue = aesEncryptor.InitVectorConverter(IV, true);
+            this._initVectorOriginalValue = _aesEncryptor.InitVectorConverter(_vectorIV, true);
+            this._initVectorModifiedValue = _aesEncryptor.InitVectorConverter(_vectorIV, true);
         }
 
         ~VisualizeViewModel()
@@ -104,10 +104,10 @@ namespace SymetricBlockEncrypter.ViewModels
         private string _initVectorModifiedValue;
 
         // Encrpytion members
-        private AESEncryption aesEncryptor;
-        private string IV;
+        private AESEncryption _aesEncryptor;
+        private string _vectorIV;
 
-        private string rootFolder;
+        private string _rootFolder;
 
         #endregion
 
@@ -175,7 +175,7 @@ namespace SymetricBlockEncrypter.ViewModels
                 if (value != this._selectedEncryptionType)
                 {
                     this._selectedEncryptionType = value;
-                    aesEncryptor.SetEncryptionBlockMode(value);
+                    _aesEncryptor.SetEncryptionBlockMode(value);
                     RaisePropertyChanged("SelectedEncryptionType");
                 }
             }
@@ -279,24 +279,24 @@ namespace SymetricBlockEncrypter.ViewModels
             {
                 BitmapImage image = _encryptedImage as BitmapImage;
                 Uri uri = image.UriSource;
-                aesEncryptor.CopyFile(uri.AbsolutePath, filePath);
+                _aesEncryptor.CopyFile(uri.AbsolutePath, filePath);
             }
             else if (saveType == "Decrypted")
             {
                 BitmapImage image = _decryptedImage as BitmapImage;
                 Uri uri = image.UriSource;
-                aesEncryptor.CopyFile(uri.AbsolutePath, filePath);
+                _aesEncryptor.CopyFile(uri.AbsolutePath, filePath);
             }
         }
 
         private void EncryptImage()
         {
-            string tmpImagePath = rootFolder + @"\RuntimeResources\Images\TmpEncrypt\" + _selectedEncryptionType + _originalImageSafeName; ;
+            string tmpImagePath = _rootFolder + @"\RuntimeResources\Images\TmpEncrypt\" + _selectedEncryptionType + _originalImageSafeName; ;
 
-            aesEncryptor.SetInputFilePath(_originalImage);
-            aesEncryptor.SetOutputFilePath(tmpImagePath);
-            aesEncryptor.Encrypt();
-            aesEncryptor.SaveFile();
+            _aesEncryptor.SetInputFilePath(_originalImage);
+            _aesEncryptor.SetOutputFilePath(tmpImagePath);
+            _aesEncryptor.Encrypt();
+            _aesEncryptor.SaveFile();
             EncryptedImage = BitmapFromUri(new Uri(tmpImagePath));
         }
 
@@ -311,11 +311,11 @@ namespace SymetricBlockEncrypter.ViewModels
             // Each time we switch between 2 files if saving in the same encryption mode
             BitmapImage image = _decryptedImage as BitmapImage;
             Uri uri = image?.UriSource;
-            string tmpImagePath = rootFolder + @"\RuntimeResources\Images\TmpDecrypt\" + _selectedEncryptionType + _originalImageSafeName;
+            string tmpImagePath = _rootFolder + @"\RuntimeResources\Images\TmpDecrypt\" + _selectedEncryptionType + _originalImageSafeName;
             string fullPath = System.IO.Path.GetFullPath(tmpImagePath);
             if (uri != null && uri.LocalPath.Equals(fullPath)) // if paths are going to be the same - change to fixed one
             {
-                tmpImagePath = rootFolder + @"\RuntimeResources\Images\TmpDecrypt\fix" + _selectedEncryptionType + _originalImageSafeName;
+                tmpImagePath = _rootFolder + @"\RuntimeResources\Images\TmpDecrypt\fix" + _selectedEncryptionType + _originalImageSafeName;
             }
 
             // Only vector of the original size and hexadecimal values can be accepted
@@ -324,18 +324,18 @@ namespace SymetricBlockEncrypter.ViewModels
                 string pattern = "^[0-9A-F]+$";
                 if (Regex.IsMatch(_initVectorModifiedValue, pattern))
                 {
-                    aesEncryptor.SetInitializationVector(aesEncryptor.InitVectorConverter(_initVectorModifiedValue, false));
+                    _aesEncryptor.SetInitializationVector(_aesEncryptor.InitVectorConverter(_initVectorModifiedValue, false));
                 }
             }
 
             // Get encryptedImage path
             BitmapImage inputImage = _encryptedImage as BitmapImage;
             Uri inputUri = inputImage.UriSource;
-            aesEncryptor.SetInputFilePath(inputUri.AbsolutePath);
+            _aesEncryptor.SetInputFilePath(inputUri.AbsolutePath);
 
-            aesEncryptor.SetOutputFilePath(tmpImagePath);
-            aesEncryptor.Decrypt();
-            aesEncryptor.SaveFile();
+            _aesEncryptor.SetOutputFilePath(tmpImagePath);
+            _aesEncryptor.Decrypt();
+            _aesEncryptor.SaveFile();
             DecryptedImage = BitmapFromUri(new Uri(tmpImagePath));
         }
 
@@ -354,13 +354,13 @@ namespace SymetricBlockEncrypter.ViewModels
         {
             try
             {
-                string[] files = Directory.GetFiles(rootFolder + @"\RuntimeResources\Images\TmpDecrypt");
+                string[] files = Directory.GetFiles(_rootFolder + @"\RuntimeResources\Images\TmpDecrypt");
                 foreach (string file in files)
                 {
                     File.Delete(file);
                 }
 
-                files = Directory.GetFiles(rootFolder + @"\RuntimeResources\Images\TmpEncrypt");
+                files = Directory.GetFiles(_rootFolder + @"\RuntimeResources\Images\TmpEncrypt");
                 foreach (string file in files)
                 {
                     File.Delete(file);
