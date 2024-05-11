@@ -366,8 +366,8 @@ FodyWeavers.xsd
 
 
 # Projekt temporary files
-TmpEncrypt/*
-!TmpEncrypt/.gitkeep 
+ViewChanger/RuntimeResources/Images/TmpDecrypt/*
+!ViewChanger/RuntimeResources/Images/TmpDecrypt/.gitkeep 
 
-TmpDecrypt/*
-!TmpEncrypt/.gitkeep
+ViewChanger/RuntimeResources/Images/TmpEncrypt/*
+!ViewChanger/RuntimeResources/Images/TmpEncrypt/.gitkeep
