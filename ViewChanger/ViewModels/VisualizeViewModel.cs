@@ -512,7 +512,15 @@ namespace SymetricBlockEncrypter.ViewModels
                 int height = ciphertext.Height;
                 ciphertext.Dispose();
 
-                int index = (y * width) + x;
+                int bytesPerPixel = 3;
+
+                int index = (y * width + x) * bytesPerPixel;
+
+                if(x >= width || y >= height || index <= 0)
+                {
+                    MessageBox.Show("The selected coordinates do not fit in the image dimensions");
+                    return;
+                }
 
                 bytes[index] = red;
                 bytes[index + 1] = green;
