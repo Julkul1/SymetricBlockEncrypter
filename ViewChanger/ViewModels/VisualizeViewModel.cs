@@ -16,6 +16,12 @@ using System.Windows.Media;
 using System.Windows.Shapes;
 using System.Text.RegularExpressions;
 using System.Threading;
+using System.Windows;
+using System.Windows.Controls;
+
+using System.Drawing;
+using System.Drawing.Drawing2D;
+using System.Runtime.Intrinsics.X86;
 
 namespace SymetricBlockEncrypter.ViewModels
 {
@@ -53,6 +59,9 @@ namespace SymetricBlockEncrypter.ViewModels
             // Initialize AES
             this._aesEncryptor = new AESEncryption();
             this._vectorIV = "";
+
+            //set up command for pixel change
+            this.SubmitCommand = new RelayCommand(OnSubmitUpdatePixel);
 
             _vectorIV += "10101100";
             _vectorIV += "11111110";
@@ -106,6 +115,12 @@ namespace SymetricBlockEncrypter.ViewModels
         // Encrpytion members
         private AESEncryption _aesEncryptor;
         private string _vectorIV;
+        //image altering members
+        private string _X;
+        private string _Y;
+        private string _R;
+        private string _G;
+        private string _B;
 
         private string _rootFolder;
 
@@ -154,6 +169,8 @@ namespace SymetricBlockEncrypter.ViewModels
             }
         }
 
+        
+
         // Image buttons properties
         public ICommand SelectImageCommand { get; }
 
@@ -184,6 +201,74 @@ namespace SymetricBlockEncrypter.ViewModels
         // Encrypt & Decrypt Buttons Properties
         public ICommand EncryptImageCommand { get; }
         public ICommand DecryptImageCommand { get; }
+
+        // pixel modification properties
+        public string ModX
+        {
+            get { return this._X; }
+            set
+            {
+                if (value != this._X)
+                {
+                    this._X = value;
+                    RaisePropertyChanged("ModX");
+                }
+            }
+        }
+
+        public string ModY
+        {
+            get { return this._Y; }
+            set
+            {
+                if (value != this._Y)
+                {
+                    this._Y = value;
+                    RaisePropertyChanged("ModY");
+                }
+            }
+        }
+        public string ModR
+        {
+            get { return this._R; }
+            set
+            {
+                if (value != this._R)
+                {
+                    this._R = value;
+                    RaisePropertyChanged("ModR");
+                }
+            }
+        }
+
+        public string ModG
+        {
+            get { return this._G; }
+            set
+            {
+                if (value != this._G)
+                {
+                    this._G = value;
+                    RaisePropertyChanged("ModG");
+                }
+            }
+        }
+
+        public string ModB
+        {
+            get { return this._B; }
+            set
+            {
+                if (value != this._B)
+                {
+                    this._B = value;
+                    RaisePropertyChanged("ModB");
+                }
+            }
+        }
+
+        //submit button command
+        public ICommand SubmitCommand { get; }
 
         // Init Vector Properties
 
@@ -367,6 +452,92 @@ namespace SymetricBlockEncrypter.ViewModels
                 }
             }
             catch { }
+        }
+        //checks if the string is a positive integer number
+        private bool validateData(ref int u, string s)
+        {
+            if (s != null)
+            {
+                if (s.Length > 0)
+                {
+                    bool isUnsignedIntegerNumber = Regex.IsMatch(s, @"^\d+$");
+                    u = Int32.Parse(s);
+                    return isUnsignedIntegerNumber;
+                }
+            }
+            return false;
+        }
+
+
+        //extract R,G,B,X,Y fields from the form and validate them
+        private bool ExtractData(ref int x, ref int y, ref int r, ref int g, ref int b)
+        {
+            if (!validateData(ref x, _X))
+                return false;
+            if (!validateData(ref y, _Y))
+                return false;
+            if (!validateData(ref r, _R))
+                return false;
+            if (!validateData(ref g, _G))
+                return false;
+            if (!validateData(ref b, _B))
+                return false;
+            return true;
+        }
+
+        private void OverwriteImage(int x, int y, int r, int g, int b)
+        {
+            if (this._encryptedImage != null)
+            {
+                string tmpImagePath = _rootFolder + @"\RuntimeResources\Images\TmpEncrypt\" + _selectedEncryptionType + _originalImageSafeName;
+
+
+                byte[] bytes = System.IO.File.ReadAllBytes(tmpImagePath);
+                byte red = (byte)r;
+                byte green = (byte)g;
+                byte blue = (byte)b;
+
+                Bitmap ciphertext = new Bitmap(tmpImagePath);
+                int width = ciphertext.Width;
+                int height = ciphertext.Height;
+                ciphertext.Dispose();
+
+                int index = (y * width) + x;
+
+                bytes[index] = red;
+                bytes[index + 1] = green;
+                bytes[index + 2] = blue;
+
+
+                using (var writer = new BinaryWriter(File.OpenWrite(tmpImagePath)))
+                {
+                    writer.Write(bytes);
+                }
+
+                /*Bitmap ciphertext = new Bitmap(tmpImagePath);
+                Bitmap c2 = new Bitmap(ciphertext, new System.Drawing.Size(ciphertext.Width,ciphertext.Height));
+                c2.SetResolution(100, 100);
+
+                
+
+                System.Drawing.Color RGBColor = System.Drawing.Color.FromArgb(red,green,blue);
+                ciphertext.SetPixel(x, y, RGBColor);
+                string tempModPath = rootFolder + @"\RuntimeResources\Images\TmpEncrypt\" + _selectedEncryptionType + "mod" + _originalImageSafeName;
+                ciphertext.Save(tempModPath);
+                EncryptedImage = BitmapFromUri(new Uri(tempModPath));*/
+            }
+        }
+
+        //submit button event handler
+        public void OnSubmitUpdatePixel()
+        {
+            int x = 0, y = 0, r = 0, g = 0, b = 0;
+            if (!ExtractData(ref x, ref y, ref r, ref g, ref b))
+                return; //skip the code if the input is invalid
+
+            OverwriteImage(x, y, r, g, b);
+
+
         }
 
         #endregion
