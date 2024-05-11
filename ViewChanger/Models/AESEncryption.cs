@@ -46,7 +46,7 @@ namespace SymetricBlockEncrypter.Models
         public AESEncryption()
         {
             AES = new AesManaged();
-            AES.Padding = PaddingMode.PKCS7;
+            AES.Padding = PaddingMode.Zeros;
         }
 
         // sets an AES encryption key
@@ -259,49 +259,47 @@ namespace SymetricBlockEncrypter.Models
         //encrypts OR decrypts file using CTR mode
         private void EncryptUsingCTR()
         {
-            using (MemoryStream inputFileStream = new MemoryStream(inputFileBinary))
-            using (MemoryStream outputFileStream = new MemoryStream())
-            using (AesCryptoServiceProvider aesProvider = new AesCryptoServiceProvider())
+            using (Aes aesAlg = Aes.Create())
             {
-                // Create AES encryptor in ECB mode
+                aesAlg.Key = AES.Key;
+                aesAlg.IV = AES.IV;
 
-
-                aesProvider.Key = AES.Key;
-                aesProvider.Mode = CipherMode.ECB;
-
-                // Create AES decryptor
-                using (ICryptoTransform encryptor = aesProvider.CreateEncryptor(AES.Key, AES.IV))
+                using (ICryptoTransform encryptor = aesAlg.CreateEncryptor(aesAlg.Key, aesAlg.IV))
                 {
                     byte[] counter = InitializeCounter();
 
-
-                    WriteHeader(inputFileStream, outputFileStream);
-
-                    byte[] buffer = new byte[4096];
-                    int bytesRead;
-                    while ((bytesRead = inputFileStream.Read(buffer, 0, buffer.Length)) > 0)
+                    using (MemoryStream inputFileStream = new MemoryStream(inputFileBinary))
+                    using (MemoryStream outputFileStream = new MemoryStream())
                     {
-                        // Encrypt the counter to generate the keystream
-                        byte[] encryptedCounter = encryptor.TransformFinalBlock(counter, 0, counter.Length);
+                        WriteHeader(inputFileStream, outputFileStream);
 
-                        // XOR the plaintext data with the keystream to produce the ciphertext
-                        for (int i = 0; i < bytesRead; i++)
+                        byte[] buffer = new byte[16];
+                        int bytesRead;
+                        while ((bytesRead = inputFileStream.Read(buffer, 0, buffer.Length)) > 0)
                         {
-                            int keystreamIndex = (i % AES.BlockSize) % encryptedCounter.Length;
-                            buffer[i] ^= encryptedCounter[keystreamIndex];
+                            byte[] encryptedCounter = new byte[16];
+
+                            // Encrypt the counter
+                            using (MemoryStream counterStream = new MemoryStream(counter))
+                            using (CryptoStream cryptoStream = new CryptoStream(counterStream, encryptor, CryptoStreamMode.Read))
+                            {
+                                cryptoStream.Read(encryptedCounter, 0, encryptedCounter.Length);
+                            }
+
+                            // XOR the buffer with the encrypted counter
+                            for (int i = 0; i < buffer.Length; i++)
+                            {
+                                buffer[i] ^= encryptedCounter[i];
+                            }
+
+                            // Write the encrypted content to the output file
+                            outputFileStream.Write(buffer, 0, bytesRead);
+                            IncrementCounter(counter);
                         }
 
-                        // Write the encrypted data to the output stream
-                        outputFileStream.Write(buffer, 0, bytesRead);
-
-                        // Increment the counter for the next block
-                        IncrementCounter(counter);
+                        outputFileBinary = outputFileStream.ToArray();
                     }
                 }
-
-
-                // Store the encrypted output
-                outputFileBinary = outputFileStream.ToArray();
             }
         }
 
