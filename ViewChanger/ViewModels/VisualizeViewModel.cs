@@ -443,6 +443,7 @@ namespace SymetricBlockEncrypter.ViewModels
             bitmap.CacheOption = BitmapCacheOption.OnLoad;
             bitmap.EndInit();
             return bitmap;
+            
         }
 
         private void ClearTmpFiles()
@@ -532,17 +533,6 @@ namespace SymetricBlockEncrypter.ViewModels
                     writer.Write(bytes);
                 }
 
-                /*Bitmap ciphertext = new Bitmap(tmpImagePath);
-                Bitmap c2 = new Bitmap(ciphertext, new System.Drawing.Size(ciphertext.Width,ciphertext.Height));
-                c2.SetResolution(100, 100);
-
-                
-
-                System.Drawing.Color RGBColor = System.Drawing.Color.FromArgb(red,green,blue);
-                ciphertext.SetPixel(x, y, RGBColor);
-                string tempModPath = rootFolder + @"\RuntimeResources\Images\TmpEncrypt\" + _selectedEncryptionType + "mod" + _originalImageSafeName;
-                ciphertext.Save(tempModPath);
-                EncryptedImage = BitmapFromUri(new Uri(tempModPath));*/
             }
         }
 

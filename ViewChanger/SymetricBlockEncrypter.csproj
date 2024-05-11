@@ -10,7 +10,6 @@
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Assets\Images\" />
     <Folder Include="RuntimeResources\Images\" />
   </ItemGroup>
   <ItemGroup>

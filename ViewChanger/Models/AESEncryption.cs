@@ -163,10 +163,12 @@ namespace SymetricBlockEncrypter.Models
         //will be good for a "save output" button handler
         public void SaveFile()
         {
-            using (var writer = new BinaryWriter(File.OpenWrite(outputFilePath)))
+            using (var writer = File.OpenWrite(outputFilePath))
             {
                 writer.Write(outputFileBinary);
+                
             }
+            
         }
 
         private void WriteHeader(MemoryStream inputFileStream, MemoryStream outputFileStream)
