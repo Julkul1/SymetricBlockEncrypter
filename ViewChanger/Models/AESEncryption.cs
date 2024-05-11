@@ -46,7 +46,7 @@ namespace SymetricBlockEncrypter.Models
         public AESEncryption()
         {
             AES = new AesManaged();
-            AES.Padding = PaddingMode.Zeros;
+            AES.Padding = PaddingMode.PKCS7;
         }
 
         // sets an AES encryption key

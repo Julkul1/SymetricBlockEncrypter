@@ -377,6 +377,16 @@ namespace SymetricBlockEncrypter.ViewModels
         private void EncryptImage()
         {
             string tmpImagePath = _rootFolder + @"\RuntimeResources\Images\TmpEncrypt\" + _selectedEncryptionType + _originalImageSafeName; ;
+            
+            // Only vector of the original size and hexadecimal values can be accepted
+            if (_initVectorModifiedValue.Length == _initVectorOriginalValue.Length)
+            {
+                string pattern = "^[0-9A-F]+$";
+                if (Regex.IsMatch(_initVectorModifiedValue, pattern))
+                {
+                    _aesEncryptor.SetInitializationVector(_aesEncryptor.InitVectorConverter(_initVectorModifiedValue, false));
+                }
+            }
 
             _aesEncryptor.SetInputFilePath(_originalImage);
             _aesEncryptor.SetOutputFilePath(tmpImagePath);
