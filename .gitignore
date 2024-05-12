@@ -361,3 +361,10 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+
+
+
+
+# Project temporary files
+ViewChanger/RuntimeResources/Images/*
+!ViewChanger/RuntimeResources/Images/.gitkeep 
