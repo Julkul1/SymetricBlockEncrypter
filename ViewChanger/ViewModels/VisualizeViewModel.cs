@@ -30,10 +30,10 @@ namespace SymetricBlockEncrypter.ViewModels
         #region Consturctors
         public VisualizeViewModel()
         {
-            ClearTmpFiles();
-
             // Paths of default images to show
             this._rootFolder = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\..\..\..";
+
+            ClearTmpFiles();
 
             this._originalImage = _rootFolder + @"\Assets\Images\Obama.bmp";
             this._originalImageSafeName = "Obama.bmp";
@@ -325,7 +325,7 @@ namespace SymetricBlockEncrypter.ViewModels
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
             // Accept only .png .jpg .bmp file types
-            openFileDialog.Filter = "Image Files (*.ppm;*.bmp)|*.ppm;*.bmp|All Files (*.*)|*.*";
+            openFileDialog.Filter = "Image Files (*.bmp)|*.bmp|All Files (*.*)|*.*";
             openFileDialog.FilterIndex = 1;
             openFileDialog.Multiselect = false;
 
@@ -376,18 +376,9 @@ namespace SymetricBlockEncrypter.ViewModels
 
         private void EncryptImage()
         {
-            string tmpImagePath = _rootFolder + @"\RuntimeResources\Images\TmpEncrypt\" + _selectedEncryptionType + _originalImageSafeName; ;
-            
-            // Only vector of the original size and hexadecimal values can be accepted
-            if (_initVectorModifiedValue.Length == _initVectorOriginalValue.Length)
-            {
-                string pattern = "^[0-9A-F]+$";
-                if (Regex.IsMatch(_initVectorModifiedValue, pattern))
-                {
-                    _aesEncryptor.SetInitializationVector(_aesEncryptor.InitVectorConverter(_initVectorModifiedValue, false));
-                }
-            }
+            string tmpImagePath = _rootFolder + @"\RuntimeResources\Images\TmpEncrypt.bmp";
 
+            _aesEncryptor.SetInitializationVector(_vectorIV);
             _aesEncryptor.SetInputFilePath(_originalImage);
             _aesEncryptor.SetOutputFilePath(tmpImagePath);
             _aesEncryptor.Encrypt();
@@ -402,16 +393,7 @@ namespace SymetricBlockEncrypter.ViewModels
                 return;
             }
             
-            // Fix for image not refreshing due to the same path name
-            // Each time we switch between 2 files if saving in the same encryption mode
-            BitmapImage image = _decryptedImage as BitmapImage;
-            Uri uri = image?.UriSource;
-            string tmpImagePath = _rootFolder + @"\RuntimeResources\Images\TmpDecrypt\" + _selectedEncryptionType + _originalImageSafeName;
-            string fullPath = System.IO.Path.GetFullPath(tmpImagePath);
-            if (uri != null && uri.LocalPath.Equals(fullPath)) // if paths are going to be the same - change to fixed one
-            {
-                tmpImagePath = _rootFolder + @"\RuntimeResources\Images\TmpDecrypt\fix" + _selectedEncryptionType + _originalImageSafeName;
-            }
+            string tmpImagePath = _rootFolder + @"\RuntimeResources\Images\TmpDecrypt.bmp";
 
             // Only vector of the original size and hexadecimal values can be accepted
             if (_initVectorModifiedValue.Length == _initVectorOriginalValue.Length)
@@ -441,6 +423,7 @@ namespace SymetricBlockEncrypter.ViewModels
             bitmap.BeginInit();
             bitmap.UriSource = source;
             bitmap.CacheOption = BitmapCacheOption.OnLoad;
+            bitmap.CreateOptions = BitmapCreateOptions.IgnoreImageCache;
             bitmap.EndInit();
             return bitmap;
             
@@ -450,13 +433,7 @@ namespace SymetricBlockEncrypter.ViewModels
         {
             try
             {
-                string[] files = Directory.GetFiles(_rootFolder + @"\RuntimeResources\Images\TmpDecrypt");
-                foreach (string file in files)
-                {
-                    File.Delete(file);
-                }
-
-                files = Directory.GetFiles(_rootFolder + @"\RuntimeResources\Images\TmpEncrypt");
+                string[] files = Directory.GetFiles(_rootFolder + @"\RuntimeResources\Images");
                 foreach (string file in files)
                 {
                     File.Delete(file);
