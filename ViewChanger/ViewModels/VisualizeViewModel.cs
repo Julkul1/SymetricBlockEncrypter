@@ -36,7 +36,6 @@ namespace SymetricBlockEncrypter.ViewModels
             ClearTmpFiles();
 
             this._originalImage = _rootFolder + @"\Assets\Images\Obama.bmp";
-            this._originalImageSafeName = "Obama.bmp";
             this._encryptedImage = null;
             this._decryptedImage = null;
 
@@ -100,7 +99,6 @@ namespace SymetricBlockEncrypter.ViewModels
 
         // Image members
         private string _originalImage;
-        private string _originalImageSafeName;
         private ImageSource _encryptedImage;
         private ImageSource _decryptedImage;
 
@@ -324,7 +322,7 @@ namespace SymetricBlockEncrypter.ViewModels
         private void SelectImage()
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
-            // Accept only .png .jpg .bmp file types
+            // Accept only .bmp file types
             openFileDialog.Filter = "Image Files (*.bmp)|*.bmp|All Files (*.*)|*.*";
             openFileDialog.FilterIndex = 1;
             openFileDialog.Multiselect = false;
@@ -332,7 +330,6 @@ namespace SymetricBlockEncrypter.ViewModels
             if (openFileDialog.ShowDialog() == true)
             {
                 this.OriginalImage = openFileDialog.FileName;
-                _originalImageSafeName = openFileDialog.SafeFileName;
             }
         }
 
@@ -426,7 +423,6 @@ namespace SymetricBlockEncrypter.ViewModels
             bitmap.CreateOptions = BitmapCreateOptions.IgnoreImageCache;
             bitmap.EndInit();
             return bitmap;
-            
         }
 
         private void ClearTmpFiles()
@@ -441,8 +437,9 @@ namespace SymetricBlockEncrypter.ViewModels
             }
             catch { }
         }
+
         //checks if the string is a positive integer number
-        private bool validateData(ref int u, string s)
+        private bool ValidateData(ref int u, string s)
         {
             if (s != null)
             {
@@ -460,15 +457,15 @@ namespace SymetricBlockEncrypter.ViewModels
         //extract R,G,B,X,Y fields from the form and validate them
         private bool ExtractData(ref int x, ref int y, ref int r, ref int g, ref int b)
         {
-            if (!validateData(ref x, _X))
+            if (!ValidateData(ref x, _X))
                 return false;
-            if (!validateData(ref y, _Y))
+            if (!ValidateData(ref y, _Y))
                 return false;
-            if (!validateData(ref r, _R))
+            if (!ValidateData(ref r, _R))
                 return false;
-            if (!validateData(ref g, _G))
+            if (!ValidateData(ref g, _G))
                 return false;
-            if (!validateData(ref b, _B))
+            if (!ValidateData(ref b, _B))
                 return false;
             return true;
         }
@@ -477,7 +474,10 @@ namespace SymetricBlockEncrypter.ViewModels
         {
             if (this._encryptedImage != null)
             {
-                string tmpImagePath = _rootFolder + @"\RuntimeResources\Images\TmpEncrypt\" + _selectedEncryptionType + _originalImageSafeName;
+                // Get encryptedImage path
+                BitmapImage inputImage = _encryptedImage as BitmapImage;
+                Uri inputUri = inputImage.UriSource;
+                string tmpImagePath = inputUri.AbsolutePath;
 
 
                 byte[] bytes = System.IO.File.ReadAllBytes(tmpImagePath);
@@ -521,8 +521,6 @@ namespace SymetricBlockEncrypter.ViewModels
                 return; //skip the code if the input is invalid
 
             OverwriteImage(x, y, r, g, b);
-
-
         }
 
         #endregion

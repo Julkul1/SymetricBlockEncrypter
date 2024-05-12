@@ -7,7 +7,7 @@
              mc:Ignorable="d" Height="200" Width="300">
     <Grid Background="ForestGreen">
         <Canvas>
-            <Button Content="Select 188898" Width="130" Height="34" Command="{Binding SelectFileCommand}" Canvas.Left="10" Canvas.Top="18" HorizontalAlignment="Center" VerticalAlignment="Top"/>
+            <Button Content="Select file" Width="130" Height="34" Command="{Binding SelectFileCommand}" Canvas.Left="10" Canvas.Top="18" HorizontalAlignment="Center" VerticalAlignment="Top"/>
 
             <ComboBox Height="20" Width="80" SelectedIndex="0" 
                       ItemsSource="{Binding EncryptionTypes}"
