@@ -7,7 +7,7 @@
         xmlns:views="clr-namespace:SymetricBlockEncrypter.Views"
         mc:Ignorable="d"
         ResizeMode="CanResize"
-        Title="[Julian Kulikowski 188898]" Height="800" Width="1200">
+        Title="Symetric Block Encrypter" Height="800" Width="1200">
     <Window.Resources>
         <DataTemplate x:Name="visualizeViewTemplate" DataType="{x:Type viewmodels:VisualizeViewModel}">
             <views:VisualizeView DataContext="{Binding}"/>
