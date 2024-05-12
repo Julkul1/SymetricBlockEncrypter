@@ -432,7 +432,10 @@ namespace SymetricBlockEncrypter.ViewModels
                 string[] files = Directory.GetFiles(_rootFolder + @"\RuntimeResources\Images");
                 foreach (string file in files)
                 {
-                    File.Delete(file);
+                    if (!file.EndsWith(".gitkeep"))
+                    {
+                        File.Delete(file);
+                    }
                 }
             }
             catch { }
