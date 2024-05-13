@@ -35,8 +35,6 @@ namespace SymetricBlockEncrypter.ViewModels
             // Paths of default images to show
             this._rootFolder = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\..\..\..";
 
-            ClearTmpFiles();
-
             this._originalImage = _rootFolder + @"\Assets\Images\Obama.bmp";
             this._encryptedImage = null;
             this._decryptedImage = null;
@@ -93,11 +91,7 @@ namespace SymetricBlockEncrypter.ViewModels
             // Set up init vector members
             this._initVectorOriginalValue = _aesEncryptor.InitVectorConverter(_vectorIV, true);
             this._initVectorModifiedValue = _aesEncryptor.InitVectorConverter(_vectorIV, true);
-        }
 
-        ~VisualizeViewModel()
-        {
-            ClearTmpFiles();
         }
 
         #endregion
@@ -511,22 +505,6 @@ namespace SymetricBlockEncrypter.ViewModels
             bitmap.CreateOptions = BitmapCreateOptions.IgnoreImageCache;
             bitmap.EndInit();
             return bitmap;
-        }
-
-        private void ClearTmpFiles()
-        {
-            try
-            {
-                string[] files = Directory.GetFiles(_rootFolder + @"\RuntimeResources\Images");
-                foreach (string file in files)
-                {
-                    if (!file.EndsWith(".gitkeep"))
-                    {
-                        File.Delete(file);
-                    }
-                }
-            }
-            catch { }
         }
 
         // Modifies one selected image
