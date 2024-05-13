@@ -37,7 +37,7 @@ namespace SymetricBlockEncrypter.Views
 
         private VisualizeViewModel _viewModel;
 
-        #endregion 
+        #endregion
 
     }
 }

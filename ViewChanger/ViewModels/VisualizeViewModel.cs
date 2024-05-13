@@ -22,6 +22,8 @@ using System.Windows.Controls;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Runtime.Intrinsics.X86;
+using System.Printing;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace SymetricBlockEncrypter.ViewModels
 {
@@ -50,9 +52,15 @@ namespace SymetricBlockEncrypter.ViewModels
                 "ECB", "CBC", "CFB", "CTR"
             };
             this._selectedEncryptionType = this._encryptionTypes[0];
+            this._selectedDecryptionType = this._encryptionTypes[0];
 
             // Set up encryption and decryption buttons
-            this.EncryptImageCommand = new RelayCommand(EncryptImage);
+            this.EncryptImageCommand = new RelayCommand(() => {
+                this.EncryptImage();
+                this.SelectedDecryptionType = this._selectedEncryptionType;
+                this.PixelXCoordinate = "0";
+                this.PixelYCoordinate = "0";
+            });
             this.DecryptImageCommand = new RelayCommand(DecryptImage);
 
             // Initialize AES
@@ -60,7 +68,7 @@ namespace SymetricBlockEncrypter.ViewModels
             this._vectorIV = "";
 
             //set up command for pixel change
-            this.SubmitCommand = new RelayCommand(OnSubmitUpdatePixel);
+            this.OverwriteImageCommand = new RelayCommand(OverwriteImage);
 
             _vectorIV += "10101100";
             _vectorIV += "11111110";
@@ -105,6 +113,7 @@ namespace SymetricBlockEncrypter.ViewModels
         // Drop down menu members
         private ObservableCollection<string> _encryptionTypes;
         private string _selectedEncryptionType;
+        private string _selectedDecryptionType;
 
         // Init vector members
         private string _initVectorOriginalValue;
@@ -113,12 +122,14 @@ namespace SymetricBlockEncrypter.ViewModels
         // Encrpytion members
         private AESEncryption _aesEncryptor;
         private string _vectorIV;
+
         //image altering members
-        private string _X;
-        private string _Y;
-        private string _R;
-        private string _G;
-        private string _B;
+        private string _pixelXCoordinate = "0";
+        private string _pixelYCoordinate = "0";
+        private string _pixelRedValue = "0";
+        private string _pixelGreenValue = "0";
+        private string _pixelBlueValue = "0";
+        private static int PIXEL_COLOR_MAX_VALUE = 255;
 
         private string _rootFolder;
 
@@ -136,7 +147,7 @@ namespace SymetricBlockEncrypter.ViewModels
                 if (value != this._originalImage)
                 {
                     this._originalImage = value;
-                    RaisePropertyChanged("OriginalImage");
+                    RaisePropertyChanged(nameof(OriginalImage));
                 }
             }
         }
@@ -191,7 +202,20 @@ namespace SymetricBlockEncrypter.ViewModels
                 {
                     this._selectedEncryptionType = value;
                     _aesEncryptor.SetEncryptionBlockMode(value);
-                    RaisePropertyChanged("SelectedEncryptionType");
+                    RaisePropertyChanged(nameof(SelectedEncryptionType));
+                }
+            }
+        }
+
+        public string SelectedDecryptionType
+        {
+            get { return this._selectedDecryptionType; }
+            set
+            {
+                if (value != this._selectedDecryptionType)
+                {
+                    this._selectedDecryptionType = value;
+                    RaisePropertyChanged(nameof(SelectedDecryptionType));
                 }
             }
         }
@@ -200,73 +224,135 @@ namespace SymetricBlockEncrypter.ViewModels
         public ICommand EncryptImageCommand { get; }
         public ICommand DecryptImageCommand { get; }
 
-        // pixel modification properties
-        public string ModX
+        // Pixel modification properties
+        public string PixelXCoordinate
         {
-            get { return this._X; }
+            get { return this._pixelXCoordinate; }
             set
             {
-                if (value != this._X)
+                if (value != this._pixelXCoordinate && _encryptedImage != null && ValidateInputNumber(value))
                 {
-                    this._X = value;
-                    RaisePropertyChanged("ModX");
+                    int x = Int32.Parse(value);
+                    if (x > _encryptedImage.Width)
+                    {
+                        this._pixelXCoordinate = $"{(int)_encryptedImage.Width}";
+                    }
+                    else
+                    {
+                        this._pixelXCoordinate = $"{x}";
+                    }
+                    RaisePropertyChanged(nameof(PixelXCoordinate));
+                }
+                else if (value == null || value.Length == 0)
+                {
+                    this._pixelXCoordinate = "0";
+                    RaisePropertyChanged(nameof(PixelXCoordinate));
                 }
             }
         }
-
-        public string ModY
+        public string PixelYCoordinate
         {
-            get { return this._Y; }
+            get { return this._pixelYCoordinate; }
             set
             {
-                if (value != this._Y)
+                if (value != this._pixelYCoordinate && _encryptedImage != null && ValidateInputNumber(value))
                 {
-                    this._Y = value;
-                    RaisePropertyChanged("ModY");
+                    int y = Int32.Parse(value);
+                    if (y > _encryptedImage.Height)
+                    {
+                        this._pixelYCoordinate = $"{(int)_encryptedImage.Height}";
+                    }
+                    else
+                    {
+                        this._pixelYCoordinate = $"{y}";
+                    }
+                    RaisePropertyChanged(nameof(PixelYCoordinate));
+                }
+                else if (value == null || value.Length == 0)
+                {
+                    this._pixelYCoordinate = "0";
+                    RaisePropertyChanged(nameof(PixelYCoordinate));
                 }
             }
         }
-        public string ModR
+        public string PixelRedValue
         {
-            get { return this._R; }
+            get { return this._pixelRedValue; }
             set
             {
-                if (value != this._R)
+                if (value != this._pixelRedValue && ValidateInputNumber(value))
                 {
-                    this._R = value;
-                    RaisePropertyChanged("ModR");
+                    int num = Int32.Parse(value);
+                    if (num > PIXEL_COLOR_MAX_VALUE)
+                    {
+                        this._pixelRedValue = $"{PIXEL_COLOR_MAX_VALUE}";
+                    }
+                    else
+                    {
+                        this._pixelRedValue = $"{num}";
+                    }
+                    RaisePropertyChanged(nameof(PixelRedValue));
+                }
+                else if (value == null || value.Length == 0)
+                {
+                    this._pixelRedValue = "0";
+                    RaisePropertyChanged(nameof(PixelYCoordinate));
                 }
             }
         }
-
-        public string ModG
+        public string PixelGreenValue
         {
-            get { return this._G; }
+            get { return this._pixelGreenValue; }
             set
             {
-                if (value != this._G)
+                if (value != this._pixelGreenValue && ValidateInputNumber(value))
                 {
-                    this._G = value;
+                    int num = Int32.Parse(value);
+                    if (num > PIXEL_COLOR_MAX_VALUE)
+                    {
+                        this._pixelGreenValue = $"{PIXEL_COLOR_MAX_VALUE}";
+                    }
+                    else
+                    {
+                        this._pixelGreenValue = $"{num}";
+                    }
                     RaisePropertyChanged("ModG");
                 }
+                else if (value == null || value.Length == 0)
+                {
+                    this._pixelGreenValue = "0";
+                    RaisePropertyChanged(nameof(PixelYCoordinate));
+                }
             }
         }
-
-        public string ModB
+        public string PixelBlueValue
         {
-            get { return this._B; }
+            get { return this._pixelBlueValue; }
             set
             {
-                if (value != this._B)
+                if (value != this._pixelBlueValue && ValidateInputNumber(value))
                 {
-                    this._B = value;
+                    int num = Int32.Parse(value);
+                    if (num > PIXEL_COLOR_MAX_VALUE)
+                    {
+                        this._pixelBlueValue = $"{PIXEL_COLOR_MAX_VALUE}";
+                    }
+                    else
+                    {
+                        this._pixelBlueValue = $"{num}";
+                    }
                     RaisePropertyChanged("ModB");
+                }
+                else if (value == null || value.Length == 0)
+                {
+                    this._pixelBlueValue = "0";
+                    RaisePropertyChanged(nameof(PixelYCoordinate));
                 }
             }
         }
 
-        //submit button command
-        public ICommand SubmitCommand { get; }
+        // Submit button command
+        public ICommand OverwriteImageCommand { get; }
 
         // Init Vector Properties
 
@@ -389,7 +475,8 @@ namespace SymetricBlockEncrypter.ViewModels
             {
                 return;
             }
-            
+
+            _aesEncryptor.SetEncryptionBlockMode(_selectedDecryptionType);
             string tmpImagePath = _rootFolder + @"\RuntimeResources\Images\TmpDecrypt.bmp";
 
             // Only vector of the original size and hexadecimal values can be accepted
@@ -411,6 +498,7 @@ namespace SymetricBlockEncrypter.ViewModels
             _aesEncryptor.Decrypt();
             _aesEncryptor.SaveFile();
             DecryptedImage = BitmapFromUri(new Uri(tmpImagePath));
+            _aesEncryptor.SetEncryptionBlockMode(_selectedEncryptionType);
         }
 
         // Create ImageSource stored in RAM
@@ -441,42 +529,18 @@ namespace SymetricBlockEncrypter.ViewModels
             catch { }
         }
 
-        //checks if the string is a positive integer number
-        private bool ValidateData(ref int u, string s)
-        {
-            if (s != null)
-            {
-                if (s.Length > 0)
-                {
-                    bool isUnsignedIntegerNumber = Regex.IsMatch(s, @"^\d+$");
-                    u = Int32.Parse(s);
-                    return isUnsignedIntegerNumber;
-                }
-            }
-            return false;
-        }
-
-
-        //extract R,G,B,X,Y fields from the form and validate them
-        private bool ExtractData(ref int x, ref int y, ref int r, ref int g, ref int b)
-        {
-            if (!ValidateData(ref x, _X))
-                return false;
-            if (!ValidateData(ref y, _Y))
-                return false;
-            if (!ValidateData(ref r, _R))
-                return false;
-            if (!ValidateData(ref g, _G))
-                return false;
-            if (!ValidateData(ref b, _B))
-                return false;
-            return true;
-        }
-
-        private void OverwriteImage(int x, int y, int r, int g, int b)
+        // Modifies one selected image
+        private void OverwriteImage()
         {
             if (this._encryptedImage != null)
             {
+                // Get pixel data
+                int x = Int32.Parse(PixelXCoordinate);
+                int y = Int32.Parse(PixelXCoordinate);
+                byte red = Byte.Parse(_pixelRedValue);
+                byte green = Byte.Parse(_pixelGreenValue);
+                byte blue = Byte.Parse(_pixelBlueValue);
+
                 // Get encryptedImage path
                 BitmapImage inputImage = _encryptedImage as BitmapImage;
                 Uri inputUri = inputImage.UriSource;
@@ -484,9 +548,6 @@ namespace SymetricBlockEncrypter.ViewModels
 
 
                 byte[] bytes = System.IO.File.ReadAllBytes(tmpImagePath);
-                byte red = (byte)r;
-                byte green = (byte)g;
-                byte blue = (byte)b;
 
                 Bitmap ciphertext = new Bitmap(tmpImagePath);
                 int width = ciphertext.Width;
@@ -516,14 +577,18 @@ namespace SymetricBlockEncrypter.ViewModels
             }
         }
 
-        //submit button event handler
-        public void OnSubmitUpdatePixel()
+        // Checks if input string is a unsigned integer
+        private bool ValidateInputNumber(string s)
         {
-            int x = 0, y = 0, r = 0, g = 0, b = 0;
-            if (!ExtractData(ref x, ref y, ref r, ref g, ref b))
-                return; //skip the code if the input is invalid
-
-            OverwriteImage(x, y, r, g, b);
+            if (s != null)
+            {
+                if (s.Length > 0)
+                {
+                    bool isUnsignedIntegerNumber = Regex.IsMatch(s, @"^\d+$");
+                    return isUnsignedIntegerNumber;
+                }
+            }
+            return false;
         }
 
         #endregion

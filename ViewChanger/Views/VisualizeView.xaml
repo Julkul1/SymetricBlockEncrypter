@@ -65,7 +65,7 @@
                                HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
                 </Border>
                 <Label Content="Mode:" Margin="10,25,0,0" Height="16" Padding="0,0,0,0" />
-                <ComboBox Height="20" Margin="45,25,0,0" Width="50" SelectedIndex="0" 
+                <ComboBox Height="20" Margin="45,25,0,0" Width="49" SelectedIndex="0" 
                               ItemsSource="{Binding EncryptionTypes}"   
                               SelectedItem="{Binding SelectedEncryptionType}" />
                 <Polygon Points="{StaticResource ArrowPoints}" Fill="Black" Margin="10,50,0,0">
@@ -87,13 +87,12 @@
 
             <Canvas Grid.Row="1">
                 <Border BorderBrush="Gray" BorderThickness="2" Background="DarkGray" Margin="10,0,0,0">
-                    <Label Content="AES" Width="80" Height="16" Padding="0" 
-                               HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+                    <Label Content="AES" Width="80" Height="16" Padding="0" HorizontalContentAlignment="Center"/>
                 </Border>
                 <Label Content="Mode:" Margin="10,25,0,0" Height="16" Padding="0,0,0,0"/>
-                <ComboBox Height="20" Margin="45,25,0,0" Width="50" SelectedIndex="0" 
-                              ItemsSource="{Binding EncryptionTypes}"   
-                              SelectedItem="{Binding SelectedEncryptionType}" />
+                <Border BorderBrush="Gray" BorderThickness="2" Background="DarkGray" Margin="45,25,0,0">
+                    <Label Content="{Binding SelectedDecryptionType}" Width="45" Height="16" Padding="0" HorizontalContentAlignment="Center"/>
+                </Border>
                 <Polygon Points="{StaticResource ArrowPoints}" Fill="Black" Margin="10,50,0,0">
                     <Polygon.RenderTransform>
                         <ScaleTransform ScaleX="0.8" ScaleY="1"/>
@@ -121,19 +120,21 @@
             <Border BorderBrush="DarkGray" BorderThickness="2" Margin="70,70,0,0">
                 <TextBox Width="250" Height="20" TextWrapping="Wrap" FontFamily="Consolas" Text="{Binding InitVectorModifiedValue, UpdateSourceTrigger=PropertyChanged}"/>
             </Border>
-            <Label Content="X: " Height="20" Padding="0" Canvas.Left="411" Canvas.Top="72" RenderTransformOrigin="0.283,0.367"/>
-            <Label Content="Y: " Height="20" Padding="0" Canvas.Left="411" Canvas.Top="40" HorizontalAlignment="Center" VerticalAlignment="Top"/>
-            <TextBox Name="TX" Text="{Binding ModX}" Canvas.Left="430" Canvas.Top="72" Width="100"></TextBox>
-            <TextBox x:Name="TY" Text="{Binding ModY}" Canvas.Left="430" Canvas.Top="40" Width="100" HorizontalAlignment="Center" VerticalAlignment="Top"/>
-            <TextBox x:Name="TR" Text="{Binding ModR}" Canvas.Left="594" Canvas.Top="40" Width="100" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-            <TextBox x:Name="TG" Text="{Binding ModG}" Canvas.Left="737" Canvas.Top="40" Width="100" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-            <TextBox x:Name="TB" Text="{Binding ModB}" Canvas.Left="878" Canvas.Top="40" Width="100" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-            <Label Content="R " Height="20" Padding="0" Canvas.Left="638" Canvas.Top="18" HorizontalAlignment="Left" VerticalAlignment="Top"/>
-            <Label Height="20" Padding="0" Canvas.Left="782" Canvas.Top="18" HorizontalAlignment="Left" VerticalAlignment="Center">
-                <Label Content="G" Height="20" Padding="0"/>
-            </Label>
-            <Label Content="B " Height="20" Padding="0" Canvas.Left="928" Canvas.Top="18" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-            <Button Name="SubmitBtn" Canvas.Left="737" Canvas.Top="82" Width="100" Height="20" Content="Submit changes" Command="{Binding SubmitCommand}"></Button>
+
+            <!-- Pixel modification data -->
+            <Label Content="X: " Height="20" Padding="0" Margin="410,40,0,0"/>
+            <TextBox Width="100" Margin="430,40,0,0" Text="{Binding PixelXCoordinate, UpdateSourceTrigger=PropertyChanged}"/>
+            <Label Content="Y: " Height="20" Padding="0" Margin="410,72,0,0"/>
+            <TextBox Width="100" Margin="430,72,0,0" Text="{Binding PixelYCoordinate, UpdateSourceTrigger=PropertyChanged}"/>
+            <Label Content="R:" Margin="600,28,0,0" Height="20" Padding="0"/>
+            <TextBox Width="50" Margin="620,28,0,0" Text="{Binding PixelRedValue, UpdateSourceTrigger=PropertyChanged}"/>
+            <Label Content="G:" Margin="600,55,0,0" Height="20" Padding="0"/>
+            <TextBox Width="50" Margin="620,55,0,0" Text="{Binding PixelGreenValue, UpdateSourceTrigger=PropertyChanged}"/>
+            <Label Content="B:" Margin="600,82,0,0" Height="20" Padding="0"/>
+            <TextBox Width="50" Margin="620,82,0,0" Text="{Binding PixelBlueValue, UpdateSourceTrigger=PropertyChanged}"/>
+
+
+            <Button Name="SubmitBtn" Canvas.Left="737" Canvas.Top="82" Width="100" Height="20" Content="Submit changes" Command="{Binding OverwriteImageCommand}"></Button>
         </Canvas>
 
     </Grid>
