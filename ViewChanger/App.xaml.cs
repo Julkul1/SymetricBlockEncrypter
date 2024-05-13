@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows;
 
@@ -12,35 +14,38 @@ namespace SymetricBlockEncrypter
     /// Interaction logic for App.xaml
     /// </summary>
     
-    private static string _rootFolder = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\..\..\..";
     public partial class App : Application
     {
-    }
+        private static string _rootFolder = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\..\..\..";
 
-    void Application_Startup(object sedner, ExitEventArgs e)
-    {
-        ClearTmpFiles();
-    }
-
-    void Application_Exit(object sender, ExitEventArgs e)
-    {
-       // ClearTmpFiles();
-    }
-
-
-    private void ClearTmpFiles()
-    {
-        try
+        protected override void OnStartup(StartupEventArgs e)
         {
-            string[] files = Directory.GetFiles(_rootFolder + @"\RuntimeResources\Images");
-            foreach (string file in files)
+            base.OnStartup(e);
+            ClearTmpFiles();
+        }
+
+        protected override void OnExit(ExitEventArgs e)
+        {
+            base.OnExit(e);
+            ClearTmpFiles();
+        }
+
+
+        private void ClearTmpFiles()
+        {
+            try
             {
-                if (!file.EndsWith(".gitkeep"))
+                string[] files = Directory.GetFiles(_rootFolder + @"\RuntimeResources\Images");
+                foreach (string file in files)
                 {
-                    File.Delete(file);
+                    if (!file.EndsWith(".gitkeep"))
+                    {
+                        File.Delete(file);
+                    }
                 }
             }
+            catch { }
         }
-        catch { }
     }
+
 }
