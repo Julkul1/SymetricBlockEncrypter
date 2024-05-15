@@ -28,7 +28,7 @@
         <DockPanel Background="Gray" Grid.Row="0" Grid.Column="0">
             <StackPanel Orientation="Horizontal">
                 <Button Name="VisualiseNavbarButton" Content="Visualize View" Width="100" Click="Visualize_Clicked"/>
-                <Button Name="GreenNavbarButton" Content="Green View" Width="80" Click="GreenView_Clicked" />
+                <Button Name="GreenNavbarButton" Content="Simple View" Width="80" Click="GreenView_Clicked" />
             </StackPanel>
         </DockPanel>
 

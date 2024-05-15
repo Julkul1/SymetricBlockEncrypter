@@ -120,6 +120,7 @@
             <Border BorderBrush="DarkGray" BorderThickness="2" Margin="70,70,0,0">
                 <TextBox Width="250" Height="20" TextWrapping="Wrap" FontFamily="Consolas" Text="{Binding InitVectorModifiedValue, UpdateSourceTrigger=PropertyChanged}"/>
             </Border>
+            <Label Content="{Binding InitVectorModifiedValueCorrectness}" Height="20" Margin="72,96,0,0" Padding="0" Foreground="Red"/>
 
             <!-- Pixel modification data -->
             <Label Content="X: " Height="20" Padding="0" Margin="410,40,0,0"/>

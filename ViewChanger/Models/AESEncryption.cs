@@ -32,7 +32,7 @@ namespace SymetricBlockEncrypter.Models
 
         //constants
         private const double BITS_IN_A_BYTE = 8.0;
-        private const int PNG_HEADER_SIZE = 64;
+        private const int PNG_HEADER_SIZE = 56;
 
         //fields
         private byte[]? inputFileBinary;

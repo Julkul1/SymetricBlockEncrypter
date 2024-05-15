@@ -91,6 +91,7 @@ namespace SymetricBlockEncrypter.ViewModels
             // Set up init vector members
             this._initVectorOriginalValue = _aesEncryptor.InitVectorConverter(_vectorIV, true);
             this._initVectorModifiedValue = _aesEncryptor.InitVectorConverter(_vectorIV, true);
+            this._initVectorModifiedValueCorrectness = "";
 
         }
 
@@ -112,6 +113,7 @@ namespace SymetricBlockEncrypter.ViewModels
         // Init vector members
         private string _initVectorOriginalValue;
         private string _initVectorModifiedValue;
+        private string _initVectorModifiedValueCorrectness;
 
         // Encrpytion members
         private AESEncryption _aesEncryptor;
@@ -227,9 +229,9 @@ namespace SymetricBlockEncrypter.ViewModels
                 if (value != this._pixelXCoordinate && _encryptedImage != null && ValidateInputNumber(value))
                 {
                     int x = Int32.Parse(value);
-                    if (x > _encryptedImage.Width)
+                    if (x >= _encryptedImage.Width)
                     {
-                        this._pixelXCoordinate = $"{(int)_encryptedImage.Width}";
+                        this._pixelXCoordinate = $"{(int)_encryptedImage.Width - 1}";
                     }
                     else
                     {
@@ -252,9 +254,9 @@ namespace SymetricBlockEncrypter.ViewModels
                 if (value != this._pixelYCoordinate && _encryptedImage != null && ValidateInputNumber(value))
                 {
                     int y = Int32.Parse(value);
-                    if (y > _encryptedImage.Height)
+                    if (y >= _encryptedImage.Height)
                     {
-                        this._pixelYCoordinate = $"{(int)_encryptedImage.Height}";
+                        this._pixelYCoordinate = $"{(int)_encryptedImage.Height - 1}";
                     }
                     else
                     {
@@ -290,7 +292,7 @@ namespace SymetricBlockEncrypter.ViewModels
                 else if (value == null || value.Length == 0)
                 {
                     this._pixelRedValue = "0";
-                    RaisePropertyChanged(nameof(PixelYCoordinate));
+                    RaisePropertyChanged(nameof(PixelRedValue));
                 }
             }
         }
@@ -310,12 +312,12 @@ namespace SymetricBlockEncrypter.ViewModels
                     {
                         this._pixelGreenValue = $"{num}";
                     }
-                    RaisePropertyChanged("ModG");
+                    RaisePropertyChanged(nameof(PixelGreenValue));
                 }
                 else if (value == null || value.Length == 0)
                 {
                     this._pixelGreenValue = "0";
-                    RaisePropertyChanged(nameof(PixelYCoordinate));
+                    RaisePropertyChanged(nameof(PixelGreenValue));
                 }
             }
         }
@@ -335,12 +337,12 @@ namespace SymetricBlockEncrypter.ViewModels
                     {
                         this._pixelBlueValue = $"{num}";
                     }
-                    RaisePropertyChanged("ModB");
+                    RaisePropertyChanged(nameof(PixelBlueValue));
                 }
                 else if (value == null || value.Length == 0)
                 {
                     this._pixelBlueValue = "0";
-                    RaisePropertyChanged(nameof(PixelYCoordinate));
+                    RaisePropertyChanged(nameof(PixelBlueValue));
                 }
             }
         }
@@ -371,11 +373,39 @@ namespace SymetricBlockEncrypter.ViewModels
                 if (value != this._initVectorModifiedValue)
                 {
                     this._initVectorModifiedValue = value;
+
+                    // Updating InitVectorModifiedValueCorrectness label
+                    if (_initVectorModifiedValue.Length != _initVectorOriginalValue.Length)
+                    {
+                        InitVectorModifiedValueCorrectness = "Incorrect vector length";
+                    }
+                    else if (!Regex.IsMatch(_initVectorModifiedValue, "^[0-9A-F]+$"))
+                    {
+                        InitVectorModifiedValueCorrectness = "Only A-Z, 0-9 characters accepted";
+                    }
+                    else
+                    {
+                        InitVectorModifiedValueCorrectness = "";
+                    }
+
                     RaisePropertyChanged("InitVectorModifiedValue");
                 }
             }
         }
-        
+
+        public string InitVectorModifiedValueCorrectness
+        {
+            get { return this._initVectorModifiedValueCorrectness; }
+            set
+            {
+                if (value != this._initVectorModifiedValueCorrectness)
+                {
+                    this._initVectorModifiedValueCorrectness = value;
+                    RaisePropertyChanged("InitVectorModifiedValueCorrectness");
+                }
+            }
+        }
+
 
         #endregion
 
@@ -514,7 +544,8 @@ namespace SymetricBlockEncrypter.ViewModels
             {
                 // Get pixel data
                 int x = Int32.Parse(PixelXCoordinate);
-                int y = Int32.Parse(PixelXCoordinate);
+                int y = Int32.Parse(PixelYCoordinate);
+                y += 1;
                 byte red = Byte.Parse(_pixelRedValue);
                 byte green = Byte.Parse(_pixelGreenValue);
                 byte blue = Byte.Parse(_pixelBlueValue);
@@ -534,9 +565,9 @@ namespace SymetricBlockEncrypter.ViewModels
 
                 int bytesPerPixel = 3;
 
-                int index = (y * width + x) * bytesPerPixel;
+                int index = (y * width + x - 2) * bytesPerPixel;
 
-                if(x >= width || y >= height || index <= 0)
+                if(x >= width || y > height || index <= 0)
                 {
                     MessageBox.Show("The selected coordinates do not fit in the image dimensions");
                     return;
@@ -552,6 +583,7 @@ namespace SymetricBlockEncrypter.ViewModels
                     writer.Write(bytes);
                 }
 
+                EncryptedImage = BitmapFromUri(new Uri(tmpImagePath));
             }
         }
 
