@@ -32,7 +32,7 @@ namespace SymetricBlockEncrypter.Models
 
         //constants
         private const double BITS_IN_A_BYTE = 8.0;
-        private const int PNG_HEADER_SIZE = 56;
+        public const int BMP_HEADER_SIZE = 54;
 
         //fields
         private byte[]? inputFileBinary;
@@ -174,7 +174,7 @@ namespace SymetricBlockEncrypter.Models
         private void WriteHeader(MemoryStream inputFileStream, MemoryStream outputFileStream)
         {
             // Read the PNG header bytes (first 8 bytes)
-            byte[] header = new byte[PNG_HEADER_SIZE];
+            byte[] header = new byte[BMP_HEADER_SIZE];
             inputFileStream.Read(header, 0, header.Length);
 
             // Write the header to the output file

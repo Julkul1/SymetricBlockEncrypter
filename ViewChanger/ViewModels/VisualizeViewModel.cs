@@ -24,6 +24,8 @@ using System.Drawing.Drawing2D;
 using System.Runtime.Intrinsics.X86;
 using System.Printing;
 using static System.Runtime.InteropServices.JavaScript.JSType;
+using System.Diagnostics;
+using System.Windows.Media.Media3D;
 
 namespace SymetricBlockEncrypter.ViewModels
 {
@@ -521,7 +523,6 @@ namespace SymetricBlockEncrypter.ViewModels
                 // Get pixel data
                 int x = Int32.Parse(PixelXCoordinate);
                 int y = Int32.Parse(PixelYCoordinate);
-                y += 1;
                 byte red = Byte.Parse(_pixelRedValue);
                 byte green = Byte.Parse(_pixelGreenValue);
                 byte blue = Byte.Parse(_pixelBlueValue);
@@ -532,26 +533,23 @@ namespace SymetricBlockEncrypter.ViewModels
                 string tmpImagePath = inputUri.AbsolutePath;
 
 
-                byte[] bytes = System.IO.File.ReadAllBytes(tmpImagePath);
+                byte[] bytes = System.IO.File.ReadAllBytes(tmpImagePath); //"C:\Users\julku\OneDrive\Pulpit\test3.bmp"
 
-                Bitmap ciphertext = new Bitmap(tmpImagePath);
-                int width = ciphertext.Width;
-                int height = ciphertext.Height;
-                ciphertext.Dispose();
+                const int BMP_HEADER_SIZE = 54;
 
+                int width = (int)this._encryptedImage.Width;
+                int height = (int)this._encryptedImage.Height;
                 int bytesPerPixel = 3;
 
-                int index = (y * width + x - 2) * bytesPerPixel;
-
-                if(x >= width || y > height || index <= 0)
+                int index = BMP_HEADER_SIZE + (y * width + x) * bytesPerPixel;
+                if (width % 2 == 1 || height % 2 == 1)
                 {
-                    MessageBox.Show("The selected coordinates do not fit in the image dimensions");
-                    return;
+                    index += y * bytesPerPixel;
                 }
 
-                bytes[index] = red;
+                bytes[index] = blue;
                 bytes[index + 1] = green;
-                bytes[index + 2] = blue;
+                bytes[index + 2] = red; 
 
 
                 using (var writer = new BinaryWriter(File.OpenWrite(tmpImagePath)))
