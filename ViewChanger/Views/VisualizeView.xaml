@@ -40,15 +40,15 @@
 
         <!-- Original Image -->
         <Button Content="Select Image" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Center" Width="150" Height="50" Command="{Binding SelectImageCommand}"/>
-        <Image Grid.Column="1" Grid.Row="1" Source="{Binding OriginalImage}"/>
+        <Image Grid.Column="1" Grid.Row="1" Source="{Binding OriginalImage}" RenderOptions.BitmapScalingMode="NearestNeighbor"/>
 
         <!-- Encrypted Image-->
         <Button Content="Save Encrypted Image" Grid.Column="3" Grid.Row="0" HorizontalAlignment="Center" Width="150" Height="50" Command="{Binding SaveEncryptedImageCommand}"/>
-        <Image Grid.Column="3" Grid.Row="1" Source="{Binding EncryptedImage}"/>
+        <Image Grid.Column="3" Grid.Row="1" Source="{Binding EncryptedImage}" RenderOptions.BitmapScalingMode="NearestNeighbor"/>
 
         <!-- Decrypted Image-->
         <Button Content="Save Decrypted Image" Grid.Column="5" Grid.Row="0" HorizontalAlignment="Center" Width="150" Height="50" Command="{Binding SaveDecryptedImageCommand}"/>
-        <Image Grid.Column="5" Grid.Row="1" Source="{Binding DecryptedImage}"/>
+        <Image Grid.Column="5" Grid.Row="1" Source="{Binding DecryptedImage}" RenderOptions.BitmapScalingMode="NearestNeighbor"/>
 
 
         <!-- Encryption Arrow Data -->

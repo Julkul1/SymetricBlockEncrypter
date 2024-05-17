@@ -59,7 +59,11 @@ namespace SymetricBlockEncrypter.ViewModels
                 this.PixelXCoordinate = "0";
                 this.PixelYCoordinate = "0";
             });
-            this.DecryptImageCommand = new RelayCommand(DecryptImage);
+            this.DecryptImageCommand = new RelayCommand(() => {
+                this.InitVectorModifiedValue = this._initVectorModifiedValue.PadLeft(this._initVectorOriginalValue.Length, '0');
+                RaisePropertyChanged(nameof(InitVectorModifiedValue));
+                this.DecryptImage();
+            });
 
             // Initialize AES
             this._aesEncryptor = new AESEncryption();
@@ -91,7 +95,6 @@ namespace SymetricBlockEncrypter.ViewModels
             // Set up init vector members
             this._initVectorOriginalValue = _aesEncryptor.InitVectorConverter(_vectorIV, true);
             this._initVectorModifiedValue = _aesEncryptor.InitVectorConverter(_vectorIV, true);
-            this._initVectorModifiedValueCorrectness = "";
 
         }
 
@@ -113,7 +116,6 @@ namespace SymetricBlockEncrypter.ViewModels
         // Init vector members
         private string _initVectorOriginalValue;
         private string _initVectorModifiedValue;
-        private string _initVectorModifiedValueCorrectness;
 
         // Encrpytion members
         private AESEncryption _aesEncryptor;
@@ -174,7 +176,7 @@ namespace SymetricBlockEncrypter.ViewModels
             }
         }
 
-        
+
 
         // Image buttons properties
         public ICommand SelectImageCommand { get; }
@@ -370,38 +372,12 @@ namespace SymetricBlockEncrypter.ViewModels
             get { return this._initVectorModifiedValue; }
             set
             {
-                if (value != this._initVectorModifiedValue)
-                {
-                    this._initVectorModifiedValue = value;
-
-                    // Updating InitVectorModifiedValueCorrectness label
-                    if (_initVectorModifiedValue.Length != _initVectorOriginalValue.Length)
-                    {
-                        InitVectorModifiedValueCorrectness = "Incorrect vector length";
-                    }
-                    else if (!Regex.IsMatch(_initVectorModifiedValue, "^[0-9A-F]+$"))
-                    {
-                        InitVectorModifiedValueCorrectness = "Only A-Z, 0-9 characters accepted";
-                    }
-                    else
-                    {
-                        InitVectorModifiedValueCorrectness = "";
-                    }
-
-                    RaisePropertyChanged("InitVectorModifiedValue");
-                }
-            }
-        }
-
-        public string InitVectorModifiedValueCorrectness
-        {
-            get { return this._initVectorModifiedValueCorrectness; }
-            set
-            {
-                if (value != this._initVectorModifiedValueCorrectness)
-                {
-                    this._initVectorModifiedValueCorrectness = value;
-                    RaisePropertyChanged("InitVectorModifiedValueCorrectness");
+                int len = this._initVectorOriginalValue.Length;
+                string pattern = $"^[0-9A-Fa-f]{{0,{len}}}$";
+                if (value != this._initVectorModifiedValue && Regex.IsMatch(value, pattern))
+                {    
+                    this._initVectorModifiedValue = value.ToUpper();
+                    RaisePropertyChanged(nameof(InitVectorModifiedValue));
                 }
             }
         }
