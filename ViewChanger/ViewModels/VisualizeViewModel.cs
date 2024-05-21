@@ -58,13 +58,14 @@ namespace SymetricBlockEncrypter.ViewModels
             this.EncryptImageCommand = new RelayCommand(() => {
                 this.EncryptImage();
                 this.SelectedDecryptionType = this._selectedEncryptionType;
-                this.PixelXCoordinate = "0";
-                this.PixelYCoordinate = "0";
+                this.CorrectModifiedPixelValues();
             });
+
             this.DecryptImageCommand = new RelayCommand(() => {
                 this.InitVectorModifiedValue = this._initVectorModifiedValue.PadLeft(this._initVectorOriginalValue.Length, '0');
                 RaisePropertyChanged(nameof(InitVectorModifiedValue));
                 this.DecryptImage();
+                this.CorrectModifiedPixelValues();
             });
 
             // Initialize AES
@@ -72,7 +73,11 @@ namespace SymetricBlockEncrypter.ViewModels
             this._vectorIV = "";
 
             //set up command for pixel change
-            this.OverwriteImageCommand = new RelayCommand(OverwriteImage);
+            this.OverwriteImageCommand = new RelayCommand(() =>
+            {
+                this.CorrectModifiedPixelValues();
+                this.OverwriteImage();
+            });
 
             _vectorIV += "10101100";
             _vectorIV += "11111110";
@@ -124,8 +129,8 @@ namespace SymetricBlockEncrypter.ViewModels
         private string _vectorIV;
 
         //image altering members
-        private string _pixelXCoordinate = "0";
-        private string _pixelYCoordinate = "0";
+        private string _pixelXCoordinate = "1";
+        private string _pixelYCoordinate = "1";
         private string _pixelRedValue = "0";
         private string _pixelGreenValue = "0";
         private string _pixelBlueValue = "0";
@@ -233,9 +238,13 @@ namespace SymetricBlockEncrypter.ViewModels
                 if (value != this._pixelXCoordinate && _encryptedImage != null && ValidateInputNumber(value))
                 {
                     int x = Int32.Parse(value);
-                    if (x >= _encryptedImage.Width)
+                    if (x > _encryptedImage.Width)
                     {
-                        this._pixelXCoordinate = $"{(int)_encryptedImage.Width - 1}";
+                        this._pixelXCoordinate = $"{(int)_encryptedImage.Width}";
+                    }
+                    else if (x == 0)
+                    {
+                        this._pixelXCoordinate = "1";
                     }
                     else
                     {
@@ -245,7 +254,7 @@ namespace SymetricBlockEncrypter.ViewModels
                 }
                 else if (value == null || value.Length == 0)
                 {
-                    this._pixelXCoordinate = "0";
+                    this._pixelXCoordinate = "";
                     RaisePropertyChanged(nameof(PixelXCoordinate));
                 }
             }
@@ -258,9 +267,13 @@ namespace SymetricBlockEncrypter.ViewModels
                 if (value != this._pixelYCoordinate && _encryptedImage != null && ValidateInputNumber(value))
                 {
                     int y = Int32.Parse(value);
-                    if (y >= _encryptedImage.Height)
+                    if (y > _encryptedImage.Height)
                     {
-                        this._pixelYCoordinate = $"{(int)_encryptedImage.Height - 1}";
+                        this._pixelYCoordinate = $"{(int)_encryptedImage.Height}";
+                    }
+                    else if (y == 0)
+                    {
+                        this._pixelYCoordinate = "1";
                     }
                     else
                     {
@@ -270,7 +283,7 @@ namespace SymetricBlockEncrypter.ViewModels
                 }
                 else if (value == null || value.Length == 0)
                 {
-                    this._pixelYCoordinate = "0";
+                    this._pixelYCoordinate = "";
                     RaisePropertyChanged(nameof(PixelYCoordinate));
                 }
             }
@@ -295,7 +308,7 @@ namespace SymetricBlockEncrypter.ViewModels
                 }
                 else if (value == null || value.Length == 0)
                 {
-                    this._pixelRedValue = "0";
+                    this._pixelRedValue = "";
                     RaisePropertyChanged(nameof(PixelRedValue));
                 }
             }
@@ -320,7 +333,7 @@ namespace SymetricBlockEncrypter.ViewModels
                 }
                 else if (value == null || value.Length == 0)
                 {
-                    this._pixelGreenValue = "0";
+                    this._pixelGreenValue = "";
                     RaisePropertyChanged(nameof(PixelGreenValue));
                 }
             }
@@ -345,7 +358,7 @@ namespace SymetricBlockEncrypter.ViewModels
                 }
                 else if (value == null || value.Length == 0)
                 {
-                    this._pixelBlueValue = "0";
+                    this._pixelBlueValue = "";
                     RaisePropertyChanged(nameof(PixelBlueValue));
                 }
             }
@@ -435,6 +448,7 @@ namespace SymetricBlockEncrypter.ViewModels
             SaveFileDialog saveFileDialog = new SaveFileDialog();
             saveFileDialog.Filter = "All Files (*.*)|*.*"; // Filter to show all file types
             saveFileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments); // Set initial directory
+            saveFileDialog.FileName = "image.bmp";
 
             // Show the dialog and get the result
             bool? result = saveFileDialog.ShowDialog();
@@ -461,6 +475,11 @@ namespace SymetricBlockEncrypter.ViewModels
 
         private void EncryptImage()
         {
+            if (!File.Exists(_originalImage))
+            {
+                return;
+            }
+
             string tmpImagePath = _rootFolder + @"\RuntimeResources\Images\TmpEncrypt.bmp";
 
             _aesEncryptor.SetInitializationVector(_vectorIV);
@@ -526,6 +545,8 @@ namespace SymetricBlockEncrypter.ViewModels
                 byte red = Byte.Parse(_pixelRedValue);
                 byte green = Byte.Parse(_pixelGreenValue);
                 byte blue = Byte.Parse(_pixelBlueValue);
+                x--;
+                y--;
 
                 // Get encryptedImage path
                 BitmapImage inputImage = _encryptedImage as BitmapImage;
@@ -533,7 +554,7 @@ namespace SymetricBlockEncrypter.ViewModels
                 string tmpImagePath = inputUri.AbsolutePath;
 
 
-                byte[] bytes = System.IO.File.ReadAllBytes(tmpImagePath); //"C:\Users\julku\OneDrive\Pulpit\test3.bmp"
+                byte[] bytes = System.IO.File.ReadAllBytes(tmpImagePath);
 
                 const int BMP_HEADER_SIZE = 54;
 
@@ -564,15 +585,59 @@ namespace SymetricBlockEncrypter.ViewModels
         // Checks if input string is a unsigned integer
         private bool ValidateInputNumber(string s)
         {
-            if (s != null)
+            if (s != null && s.Length > 0)
             {
-                if (s.Length > 0)
-                {
                     bool isUnsignedIntegerNumber = Regex.IsMatch(s, @"^\d+$");
                     return isUnsignedIntegerNumber;
-                }
             }
             return false;
+        }
+
+        private void CorrectModifiedPixelValues()
+        {
+            if (_encryptedImage == null)
+            {
+                return;
+            }
+
+            if (PixelXCoordinate == null || PixelXCoordinate.Length == 0)
+            {
+                this.PixelXCoordinate = "1";
+            }
+            else
+            {
+                int x = Int32.Parse(PixelXCoordinate);
+                if (x > _encryptedImage.Width)
+                {
+                    this.PixelXCoordinate = "1";
+                }
+            }
+
+            if (PixelYCoordinate == null || PixelYCoordinate.Length == 0)
+            {
+                this.PixelYCoordinate = "1";
+            }
+            else
+            {
+                int y = Int32.Parse(PixelYCoordinate);
+                if (y > _encryptedImage.Height)
+                {
+                    this.PixelYCoordinate = "1";
+                }
+            }
+
+            if (PixelRedValue == null || PixelRedValue.Length == 0)
+            { 
+                this.PixelRedValue = "0";
+            }
+            if (PixelGreenValue == null || PixelGreenValue.Length == 0)
+            { 
+                this.PixelGreenValue = "0";
+            }
+            if (PixelBlueValue == null || PixelBlueValue.Length == 0)
+            { 
+                this.PixelBlueValue = "0";
+            }
         }
 
         #endregion

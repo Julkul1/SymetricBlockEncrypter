@@ -184,7 +184,7 @@ namespace SymetricBlockEncrypter.Models
         //copy given file to a new path
         public void CopyFile(string source, string dest)
         {
-            File.Copy(source, dest);
+            File.Copy(source, dest, true);
         }
 
         //encrypts the file using any mode except of CTR
