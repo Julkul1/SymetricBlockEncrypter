@@ -40,15 +40,15 @@
 
         <!-- Original Image -->
         <Button Content="Select Image" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Center" Width="150" Height="50" Command="{Binding SelectImageCommand}"/>
-        <Image Grid.Column="1" Grid.Row="1" Source="{Binding OriginalImage}"/>
+        <Image Grid.Column="1" Grid.Row="1" Source="{Binding OriginalImage}" RenderOptions.BitmapScalingMode="NearestNeighbor"/>
 
         <!-- Encrypted Image-->
         <Button Content="Save Encrypted Image" Grid.Column="3" Grid.Row="0" HorizontalAlignment="Center" Width="150" Height="50" Command="{Binding SaveEncryptedImageCommand}"/>
-        <Image Grid.Column="3" Grid.Row="1" Source="{Binding EncryptedImage}"/>
+        <Image Grid.Column="3" Grid.Row="1" Source="{Binding EncryptedImage}" RenderOptions.BitmapScalingMode="NearestNeighbor"/>
 
         <!-- Decrypted Image-->
         <Button Content="Save Decrypted Image" Grid.Column="5" Grid.Row="0" HorizontalAlignment="Center" Width="150" Height="50" Command="{Binding SaveDecryptedImageCommand}"/>
-        <Image Grid.Column="5" Grid.Row="1" Source="{Binding DecryptedImage}"/>
+        <Image Grid.Column="5" Grid.Row="1" Source="{Binding DecryptedImage}" RenderOptions.BitmapScalingMode="NearestNeighbor"/>
 
 
         <!-- Encryption Arrow Data -->
@@ -120,7 +120,6 @@
             <Border BorderBrush="DarkGray" BorderThickness="2" Margin="70,70,0,0">
                 <TextBox Width="250" Height="20" TextWrapping="Wrap" FontFamily="Consolas" Text="{Binding InitVectorModifiedValue, UpdateSourceTrigger=PropertyChanged}"/>
             </Border>
-            <Label Content="{Binding InitVectorModifiedValueCorrectness}" Height="20" Margin="72,96,0,0" Padding="0" Foreground="Red"/>
 
             <!-- Pixel modification data -->
             <Label Content="X: " Height="20" Padding="0" Margin="410,40,0,0"/>
