@@ -1,6 +1,7 @@
 # Jan Rogowski  Julian Kulikowski  Michał Węsiora 
 
-# Dokumentacja do „Implementacja aplikacji szyfrującej i deszyfrującej pliki z wykorzystaniem kryptografii symetrycznej”. <br>
+# Dokumentacja do „Implementacja aplikacji szyfrującej i deszyfrującej pliki z wykorzystaniem kryptografii symetrycznej”.
+   \
 
 ## 1.  Instrukcja obsługi aplikacji
 
@@ -29,7 +30,8 @@ Aplikacja umożliwia również modyfikację wektora IV w celu symulowania przek�
 
 Możemy również dokonać modyfikacji (przekłamania) wybranego piksela poprzez wybranie pozycji (X, Y) w polach tekstowych, składowych RGB piksela i następnie zatwierdzenie zmian przyciskiem „Submit changes”.
 
-<img src="media/image5.gif" style="width:6.55215in;height:4.50893in" /> <br>
+<img src="media/image5.gif" style="width:6.55215in;height:4.50893in" />
+   \
 
 ## 2.  Implementacja AES
 
