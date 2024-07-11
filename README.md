@@ -1,47 +1,39 @@
-Jan Rogowski
-Julian Kulikowski
-Michał Węsiora
+Jan Rogowski 
+Julian Kulikowski 
+Michał Węsiora 
 
-Dokumentacja do „Implementacja aplikacji szyfrującej i deszyfrującej
-pliki z wykorzystaniem kryptografii symetrycznej”.
+Dokumentacja do „Implementacja aplikacji szyfrującej i deszyfrującej pliki z wykorzystaniem kryptografii symetrycznej”.
+
 
 1.  Instrukcja obsługi aplikacji
 
-Aplikacja stanowi demonstrację mechanizmu szyfrowania i deszyfrowania
-plików przy pomocy algorytmu blokowego AES w języku C#. Udostępnia ona
-kilka podstawowych trybów tego algorytmu: ECB, CBC, CFB, CTR. Poprzez
-szyfrowanie zdjęć pokazuje ona działanie tych trybów, ich cechy i
-umożliwia zaobserwowanie skutków przekłamań pikseli lub wektora IV dla
-każdego z kilku obsługiwanych trybów AES.
+Aplikacja stanowi demonstrację mechanizmu szyfrowania i deszyfrowania plików przy pomocy algorytmu blokowego AES w języku C#. Udostępnia ona kilka podstawowych trybów tego algorytmu: ECB, CBC, CFB, CTR. Poprzez szyfrowanie zdjęć pokazuje ona działanie tych trybów, ich cechy i umożliwia zaobserwowanie skutków przekłamań pikseli lub wektora IV dla każdego z kilku obsługiwanych trybów AES.
+
 
 Przy pomocy przycisku „Select Image” wybieramy zdjęcie do zaszyfrowania.
 
 <img src="media/image1.gif" style="width:6.59173in;height:4.53617in" />
 
-Wybieramy tryb szyfrowania blokowego i po naciśnięciu przycisku
-„Encrypt” szyfrujemy, a po naciśnięciu przycisku „Decrypt”
-odszyfrowujemy plik.
+
+Wybieramy tryb szyfrowania blokowego i po naciśnięciu przycisku „Encrypt” szyfrujemy, a po naciśnięciu przycisku „Decrypt” odszyfrowujemy plik.
 
 <img src="media/image2.gif" style="width:6.53249in;height:4.49541in" />
 
-Aby zapisać zdjęcie na dysku wybieramy przycisk „Save Encrypted Image”
 
-albo „Save Decrypted Image”
+Aby zapisać zdjęcie na dysku wybieramy przycisk „Save Encrypted Image” albo „Save Decrypted Image”
 
 <img src="media/image3.gif" style="width:6.62577in;height:4.5596in" />
 
-Aplikacja umożliwia również modyfikację wektora IV w celu symulowania
-przekłamania. Aby dokonać modyfikacji należy najechać na pole tekstowe w
-lewym dolnym rogu i zmienić wartości szesnastkowe. Zmieniony wektor
-zostanie automatycznie wykorzystany do odszyfrowania.
+
+Aplikacja umożliwia również modyfikację wektora IV w celu symulowania przekłamania. Aby dokonać modyfikacji należy najechać na pole tekstowe w lewym dolnym rogu i zmienić wartości szesnastkowe. Zmieniony wektor zostanie automatycznie wykorzystany do odszyfrowania.
 
 <img src="media/image4.gif" style="width:6.42331in;height:4.42027in" />
 
-Możemy również dokonać modyfikacji (przekłamania) wybranego piksela
-poprzez wybranie pozycji (X, Y) w polach tekstowych, składowych RGB
-piksela i następnie zatwierdzenie zmian przyciskiem „Submit changes”.
+
+Możemy również dokonać modyfikacji (przekłamania) wybranego piksela poprzez wybranie pozycji (X, Y) w polach tekstowych, składowych RGB piksela i następnie zatwierdzenie zmian przyciskiem „Submit changes”.
 
 <img src="media/image5.gif" style="width:6.55215in;height:4.50893in" />
+
 
 2.  Implementacja AES
 
