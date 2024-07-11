@@ -1,7 +1,9 @@
 # Jan Rogowski  Julian Kulikowski  Michał Węsiora 
 
-# Dokumentacja do „Implementacja aplikacji szyfrującej i deszyfrującej pliki z wykorzystaniem kryptografii symetrycznej”.
-   \
+# Dokumentacja do „Implementacja aplikacji szyfrującej i deszyfrującej pliki z wykorzystaniem kryptografii symetrycznej”.  
+
+
+  
 
 ## 1.  Instrukcja obsługi aplikacji
 
