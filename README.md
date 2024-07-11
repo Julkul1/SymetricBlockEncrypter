@@ -1,8 +1,8 @@
-# Jan Rogowski, Julian Kulikowski, Michał Węsiora 
+# Jan Rogowski Julian Kulikowski Michał Węsiora 
 
 # Dokumentacja do „Implementacja aplikacji szyfrującej i deszyfrującej pliki z wykorzystaniem kryptografii symetrycznej”.
 
-\\
+\
 ## 1.  Instrukcja obsługi aplikacji
 
 Aplikacja stanowi demonstrację mechanizmu szyfrowania i deszyfrowania plików przy pomocy algorytmu blokowego AES w języku C#. Udostępnia ona kilka podstawowych trybów tego algorytmu: ECB, CBC, CFB, CTR. Poprzez szyfrowanie zdjęć pokazuje ona działanie tych trybów, ich cechy i umożliwia zaobserwowanie skutków przekłamań pikseli lub wektora IV dla każdego z kilku obsługiwanych trybów AES.
@@ -32,7 +32,7 @@ Możemy również dokonać modyfikacji (przekłamania) wybranego piksela poprzez
 
 <img src="media/image5.gif" style="width:6.55215in;height:4.50893in" />
 
-\\
+\
 ## 2.  Implementacja AES
 
 Algorytm AES zaimplementowany został w naszej aplikacji przy pomocy
