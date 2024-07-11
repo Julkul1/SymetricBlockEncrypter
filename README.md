@@ -1,8 +1,6 @@
-Jan Rogowski 193315
-
-Julian Kulikowski 188898
-
-Michał Węsiora 193126
+Jan Rogowski
+Julian Kulikowski
+Michał Węsiora
 
 Dokumentacja do „Implementacja aplikacji szyfrującej i deszyfrującej
 pliki z wykorzystaniem kryptografii symetrycznej”.
